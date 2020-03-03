@@ -41,29 +41,9 @@ const asideMenuConfig = [
     icon: 'shopcar',
   },
   {
-    name: '退单管理',
-    path: '/chargeback',
+    name: '类别管理',
+    path: '/add/category',
     icon: 'cascades',
-  },
-  {
-    name: '发货管理',
-    path: '/dispatch',
-    icon: 'clock',
-  },
-  {
-    name: '商品管理',
-    path: '/goods',
-    icon: 'shopcar',
-  },
-  {
-    name: '添加商品',
-    path: '/add/goods',
-    icon: 'publish',
-  },
-  {
-    name: '添加订单',
-    path: '/add/order',
-    icon: 'edit2',
   },
 ];
 

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import PageHead from '@/components/PageHead';
-import ChargeBackTable from './components/ChargeBackTable';
 import { Tree, Card, Grid, Button, Dialog, Search, Menu, Input } from '@alifd/next'
 import IceContainer from '@icedesign/container';
 import Axios from 'axios';
 
-export default function ChargeBack() {
+export default function AddCategory() {
   const { Node: TreeNode } = Tree
   const { Row, Col } = Grid
 
@@ -98,14 +97,16 @@ export default function ChargeBack() {
       <PageHead 
        title="设备类别（模式）管理"
        buttonText="确认修改"
+       onClick={() => {
+         Axios.post("/device/category", data)
+       }}
       />
       <Search
         style={{marginBottom: "8px", width: "250px"}}
         popupContent={<PopUpView />}
         visible={visible}
+        placeholder="选择设备"
         dataSource={search}
-        hasIcon={false}
-        searchText="搜索设备"
         onChange={(value) => {
           Axios.get("/device/search",{
             params: {
