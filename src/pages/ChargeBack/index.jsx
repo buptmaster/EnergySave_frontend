@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PageHead from '@/components/PageHead';
 import ChargeBackTable from './components/ChargeBackTable';
-import { Tree, Card, Grid, Button, Dialog } from '@alifd/next'
+import { Tree, Card, Grid, Button, Dialog, Search, Menu, Input } from '@alifd/next'
 import IceContainer from '@icedesign/container';
 import Axios from 'axios';
 
@@ -10,6 +10,8 @@ export default function ChargeBack() {
   const { Row, Col } = Grid
 
   const [data, setData] = useState([]);
+  const [search, setSearch] = useState([]);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     fetchData()
@@ -42,13 +44,111 @@ export default function ChargeBack() {
 
   }
 
+
+  const onPopupSelect = (keys) => {
+    let arr = keys[0].split(",");
+    const PickDialogContent = () => {
+      return (
+        <div>
+          {data.map((item, index) => {
+            const addC = () => {
+              data[index].children.push({name: arr[1], deviceId: arr[0], children:[]})
+              setData([...data])
+            }
+            return (
+              <Button style={{margin: "2px"}} onClick={addC} >{item.categoryName}</Button>
+            )
+          })}
+        </div>   
+      )
+    }
+  
+    Dialog.confirm({
+      title: "添加至以下大类中",
+      content: <PickDialogContent/>
+    })
+  }
+
+  const PopUpView = () => {
+    console.log("where am i")
+    return (
+      <Menu
+        selectMode="single"
+        onSelect={onPopupSelect}
+      >
+        <Menu.Group
+          label="选择设备"
+        >
+          {search.map((item) => {
+            return (
+              <Menu.Item
+                key={`${item.deviceId},${item.deviceName}`}
+              >
+                {item.deviceName}
+              </Menu.Item>
+            )
+          })}
+        </Menu.Group>
+      </Menu>
+    )
+  }
+
   return (
-
-
     <div>
-      <PageHead title="设备类别（模式）管理" />
+      <PageHead 
+       title="设备类别（模式）管理"
+       buttonText="确认修改"
+      />
+      <Search
+        style={{marginBottom: "8px", width: "250px"}}
+        popupContent={<PopUpView />}
+        visible={visible}
+        dataSource={search}
+        hasIcon={false}
+        searchText="搜索设备"
+        onChange={(value) => {
+          Axios.get("/device/search",{
+            params: {
+              key: value
+            }
+          }).then((res) => {
+            setSearch(res.data.data)
+            if(res.data.data.length > 0) setVisible(true); 
+          })
+        }}
+        onVisibleChange={() => setVisible(false)}
+        onFocus={() => setVisible(true)}
+       />
+       <Button 
+        style={{marginLeft: "8px"}} 
+        onClick={() => {
+          let categoryName;
+          let tag;
+          const CView = () => {
+
+            return (
+              <div>
+                <Input width="200" style={{marginBottom: "8px"}} addonTextBefore="（模式）类别名" onChange={(v) => categoryName = v }/>
+                <Input width="200" addonTextBefore="标签" onChange={(v) => tag = v} />
+              </div>
+            )
+          }
+
+          Dialog.confirm({
+            title: "添加信息",
+            content: <CView />,
+            onOk: () => {
+              data.push({
+                categoryName: categoryName,
+                tag: tag,
+                children: []
+              })
+              setData([...data])
+            }
+          })
+       }} >添加类</Button>
       <IceContainer>
-        <Row wrap >
+        <Row gutter={10} wrap >
           {data.map((tree, index) => {
 
             const dfs = (t, oldt, indexArr, callback) => {
