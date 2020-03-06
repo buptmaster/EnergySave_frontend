@@ -228,8 +228,8 @@ export default function AddCategory() {
               delKeyArr.splice(0, 1);
 
               const del = (arr, oldarr) => {
-                indep = arr;
                 oldarr.splice(delKeyArr[delKeyArr.length - 1], 1);
+                setData([...data])
               }
 
               Dialog.confirm({
