@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Dialog, Button, Input, Card, DatePicker } from '@alifd/next';
+import { Dialog, Button, Input, Card, DatePicker, Overlay, Menu } from '@alifd/next';
 import IceContainer from '@icedesign/container';
 import { withRouter } from 'react-router-dom';
 import PageHead from '@/components/PageHead';
@@ -13,6 +13,11 @@ function AddStrategy(props) {
 
   const { Row, Col } = Grid;
   const { RangePicker } = DatePicker;
+  const { Popup } = Overlay;
+
+  const [search, setSearch] = useState([]);
+  const [inputV, setInputV] = useState("");
+  const [visible, setVisible] = useState(false);
 
   const [data, setData] = useState(
     { strategyName: '', priority: 0, child: [{ deviceGroup: '', time: [{ rangePicker: [] }] }] }
@@ -65,20 +70,58 @@ function AddStrategy(props) {
         >
           <Row>
             <Col l="8" >
-              <span style={{ marginRight: "8px" }}>策略名称: </span>
+              <span style={{ marginRight: "4px" }}>策略名称: </span>
               <FormBinder name="strategyName" required message="必填">
                 <Input />
               </FormBinder>
               <FormError name="strategyName" />
             </Col>
             <Col l="8" >
-              <span style={{ marginRight: "8px" }}>策略优先级: </span>
+              <span style={{ marginRight: "4px" }}>策略优先级: </span>
               <FormBinder name="priority" required message="必填" >
                 <Input />
               </FormBinder>
               <FormError name="priority" />
             </Col>
-            <Col>
+            <Col l="6">
+              <Popup
+                offset={[10,0]}
+                onVisibleChange={() => setVisible(false)}
+                visible={visible}
+                trigger={
+                  <Input
+                    placeholder="搜索设备组"
+                    value={inputV}
+                    onChange={(key) => {
+                      setInputV(key);
+                      Axios.get(`/device/searchCg?key=${key}`)
+                      .then((res) => {
+                        setSearch(res.data.data)
+                        setVisible(true)
+                      })
+                    }}   
+                  />
+                }
+              >
+                <Menu
+                  selectMode="single"
+                  onSelect={(keys) => {
+                    setInputV(keys[0])
+                  }}
+                >
+                {search.map((item) => {
+                  return (
+                    <Menu.Item
+                      key={item}
+                    >
+                      {item}
+                    </Menu.Item>
+                  )
+                })}
+                </Menu>
+              </Popup>
+            </Col>
+            <Col l="6">
             <Button
               type="primary"
               onClick={addDevice} >添加设备组</Button>
