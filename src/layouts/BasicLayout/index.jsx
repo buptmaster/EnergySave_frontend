@@ -16,9 +16,9 @@ export default function BasicLayout({ children }) {
       </Layout.Aside>
 
       <Layout.Section>
-        <Layout.Header>
+        {/* <Layout.Header>
           <Header />
-        </Layout.Header>
+        </Layout.Header> */}
         <Layout.Main scrollable>
           <div className={styles.mainContainer}>
             {children}

@@ -4,6 +4,7 @@ import styles from './index.module.scss';
 import { Table, Grid, Button, Dialog, Tag } from '@alifd/next';
 import Axios from 'axios';
 import { withRouter } from 'react-router-dom';
+import qs from 'qs';
 
 function StrategyOverView(props) {
 
@@ -37,25 +38,6 @@ function StrategyOverView(props) {
     fetchData()
   }, [])
 
-  const childOptionView = (v, i, record) => {
-
-    const onDelete = () => {
-      return (
-        Dialog.confirm({
-          title : "警告",
-          content:"确认删除吗？",
-          onOk: () => {console.log("ok")}
-        })
-      )
-    }
-
-    return (
-      <div>
-        <Button type="normal" warning onClick={onDelete}  >删除该项</Button>
-      </div>
-    )
-  }
-
   const timeView = (record) => {
     return (
       <div>
@@ -67,6 +49,26 @@ function StrategyOverView(props) {
           )
         })}
       </div>
+    )
+  }
+
+  const footerView = (record, i) => {
+    return (
+      <Button 
+        onClick={() => {
+          Dialog.confirm({
+            title: "警告",
+            content: `确认删除策略 ${record.strategyName} 吗？`,
+            onOk: () => {
+              Axios.post("/strategy/delete", qs.stringify({name: record.strategyName}));
+              data.splice(i, 1);
+              setData([...data])
+            }
+          })
+        }}
+        type="primary" warning>
+          删除策略
+      </Button>
     )
   }
 
@@ -86,10 +88,10 @@ function StrategyOverView(props) {
               primaryKey="strategyName"
             >
               <Table.GroupHeader cell={groupHeader} />
+              <Table.GroupFooter cell={footerView} />
               <Table.Column width={120} title="优先级" dataIndex="priority"/>
               <Table.Column width={200} title="设备（组）" dataIndex="deviceGroup" />
               <Table.Column width={300} cell={timeView} title="开启时间段" dataIndex="time" />
-              <Table.Column width={200} title="操作" cell={childOptionView} />
             </Table>
           </div>
         </Col>
