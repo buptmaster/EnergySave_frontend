@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import PageHead from '@/components/PageHead';
 import styles from './index.module.scss';
 import { Table, Grid, Button, Dialog, Tag } from '@alifd/next';
@@ -10,7 +10,7 @@ function StrategyOverView(props) {
 
   const [data, setData] = useState([])
 
-  const {Row, Col} = Grid;
+  const { Row, Col } = Grid;
 
   const groupHeader = (record) => {
     return (
@@ -19,13 +19,13 @@ function StrategyOverView(props) {
   }
 
   const mockData = [
-    { strategyName: "sdfasjdfjasdfj", children: [{priority: 1, deviceGroup: "shfaskhfaskd", time: ["123"] }] },
-    { strategyName: "sadfasgrwagfaefawef", children: [{priority: 2, deviceGroup: "casewr", time: ["123","efasdf"] }] }
+    { strategyName: "sdfasjdfjasdfj", children: [{ priority: 1, deviceGroup: "shfaskhfaskd", time: ["123"] }] },
+    { strategyName: "sadfasgrwagfaefawef", children: [{ priority: 2, deviceGroup: "casewr", time: ["123", "efasdf"] }] }
   ]
 
   const fetchData = (order = "asc") => {
     Axios.get("/strategy/all", {
-      params:{
+      params: {
         order: order
       }
     }).then((res) => {
@@ -39,35 +39,61 @@ function StrategyOverView(props) {
   }, [])
 
   const timeView = (record) => {
-    return (
-      <div>
-        {record.map((item) =>{
-          return (
-            <p>
-              <Tag>{item}</Tag>
-            </p>
-          )
-        })}
-      </div>
-    )
+    if (record instanceof Array)
+      return (
+        <div>
+          {record.map((item) => {
+            return (
+              <p>
+                <Tag>{item}</Tag>
+              </p>
+            )
+          })}
+        </div>
+      )
+    else{
+      console.log(record)
+      return (
+        <div>
+          <p>
+            <span>起始周：</span>
+            <Tag>{record.weekStart}</Tag>
+          </p>
+          <p>
+            <span>结束周：</span>
+            <Tag>{record.weekEnd}</Tag>
+          </p>
+          {record.time.map((t, i) => {
+            if(t)
+              return (
+                <p>
+                  <span>{`第${i + 1}天`}</span>
+                  <Tag>{t}</Tag>
+                </p>
+              )
+          })}
+        </div>
+      )
+    }
+
   }
 
   const footerView = (record, i) => {
     return (
-      <Button 
+      <Button
         onClick={() => {
           Dialog.confirm({
             title: "警告",
             content: `确认删除策略 ${record.strategyName} 吗？`,
             onOk: () => {
-              Axios.post("/strategy/delete", qs.stringify({name: record.strategyName}));
+              Axios.post("/strategy/delete", qs.stringify({ name: record.strategyName }));
               data.splice(i, 1);
               setData([...data])
             }
           })
         }}
         type="primary" warning>
-          删除策略
+        删除策略
       </Button>
     )
   }
@@ -75,10 +101,10 @@ function StrategyOverView(props) {
 
   return (
     <div>
-      <PageHead title="策略管理" 
-        buttonText="添加策略" 
-        onClick={() => 
-        props.history.push("/add/strategy")} />
+      <PageHead title="策略管理"
+        buttonText="添加策略"
+        onClick={() =>
+          props.history.push("/add/strategy")} />
       <Row wrap >
         <Col l="16">
           <div className={styles.container}>
@@ -89,7 +115,7 @@ function StrategyOverView(props) {
             >
               <Table.GroupHeader cell={groupHeader} />
               <Table.GroupFooter cell={footerView} />
-              <Table.Column width={120} title="优先级" dataIndex="priority"/>
+              <Table.Column width={120} title="优先级" dataIndex="priority" />
               <Table.Column width={200} title="设备（组）" dataIndex="deviceGroup" />
               <Table.Column width={300} cell={timeView} title="开启时间段" dataIndex="time" />
             </Table>

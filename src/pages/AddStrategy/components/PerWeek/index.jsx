@@ -3,6 +3,7 @@ import PageHead from '@/components/PageHead';
 import { Grid, Input, DatePicker, TimePicker, Card, Button } from '@alifd/next';
 import IceContainer from '@icedesign/container';
 import FormBinderWrapper, { FormBinder } from '@icedesign/form-binder';
+import Axios from 'axios';
 
 function PerWeek(props) {
 
@@ -27,6 +28,30 @@ function PerWeek(props) {
             <PageHead
                 title="按周添加策略"
                 buttonText="确认添加"
+                onClick={() => {
+                    f.validateFields((errors, values) => {
+                        if(!errors){
+                            let copy = values;
+                            let newChild = copy.child.map((item) => {
+                                let newTime = item.time.map((t) => {
+                                    if(!t) return '';
+                                    return `${t[0].format("HH:MM")}~${t[1].format("HH:MM")}`
+                                })
+                                return {
+                                    deviceGroup: item.deviceGroup,
+                                    weekStart: `${item.weekStart.format("YYYY")}-${item.weekStart.week()}`,
+                                    weekEnd: `${item.weekEnd.format("YYYY")}-${item.weekEnd.week()}`,
+                                    time: newTime
+                                }
+                            })
+                            Axios.post('/strategy/addPerWeek', {
+                                strategyName: values.strategyName,
+                                priority: values.priority,
+                                child: newChild
+                            })
+                        }
+                    })
+                }}
             />
             <IceContainer>
                 <FormBinderWrapper
@@ -89,42 +114,121 @@ function PerWeek(props) {
                                                     }}
                                                 >
                                                     移除
-                                            </Button>
+                                                </Button>
                                                 <div>
                                                     <p>
-                                                        <span style={{ marginRight: "22px" }} >
+                                                        <span style={{ marginRight: "16px" }} >
                                                             起始周：
                                                     </span>
-                                                        <FormBinder name={`child[${index}].weekStart`}>
+                                                        <FormBinder required name={`child[${index}].weekStart`}>
                                                             <WeekPicker size="small" />
                                                         </FormBinder>
                                                     </p>
                                                     <p>
-                                                        <span style={{ marginRight: "22px" }} >
+                                                        <span style={{ marginRight: "16px" }} >
                                                             结束周：
-                                                    </span>
-                                                        <FormBinder name={`child[${index}].weekEnd`}>
+                                                        </span>
+                                                        <FormBinder required name={`child[${index}].weekEnd`}>
                                                             <WeekPicker size="small" />
                                                         </FormBinder>
                                                     </p>
                                                     <p>
-                                                        <span style={{ marginRight: "22px" }}>星期一:</span>
+                                                        <span style={{ marginRight: "16px" }}>星期一:</span>
                                                         <FormBinder
-                                                            type="array"
                                                             name={`child[${index}].time[0]`}
-                                                            getFieldValue={(date) => {
-                                                                console.log(date)
-                                                                if (typeof (date[0]) == 'string' || typeof (date[1]) == 'string')
-                                                                    return date;
-                              
-                                                                return [
-                                                                    date[0] ? date[0].format("HH:MM") : "",
-                                                                    date[1] ? date[1].format("HH:MM") : ""
-                                                                ]
-                                                            }}
                                                         >
                                                             <RangePicker
-                                                                showTime={{ format: "HH:MM" }}
+                                                                showTime
+                                                                type="year"
+                                                                format="NNN"
+                                                                size="small"
+                                                            />
+                                                        </FormBinder>
+
+                                                    </p>
+                                                    <p>
+                                                        <span style={{ marginRight: "16px" }}>星期二:</span>
+                                                        <FormBinder
+
+                                                            name={`child[${index}].time[1]`}
+                                                        >
+                                                            <RangePicker
+                                                                showTime
+                                                                type="year"
+                                                                format="NNN"
+                                                                size="small"
+                                                            />
+                                                        </FormBinder>
+
+                                                    </p>
+                                                    <p>
+                                                        <span style={{ marginRight: "16px" }}>星期三:</span>
+                                                        <FormBinder
+                                                            
+                                                            name={`child[${index}].time[2]`}
+                                                        >
+                                                            <RangePicker
+                                                                showTime
+                                                                type="year"
+                                                                format="NNN"
+                                                                size="small"
+                                                            />
+                                                        </FormBinder>
+
+                                                    </p>
+                                                    <p>
+                                                        <span style={{ marginRight: "16px" }}>星期四:</span>
+                                                        <FormBinder
+                                                            
+                                                            name={`child[${index}].time[3]`}
+                                                        >
+                                                            <RangePicker
+                                                                showTime
+                                                                type="year"
+                                                                format="NNN"
+                                                                size="small"
+                                                            />
+                                                        </FormBinder>
+
+                                                    </p>
+                                                    <p>
+                                                        <span style={{ marginRight: "16px" }}>星期五:</span>
+                                                        <FormBinder
+                                                        
+                                                            name={`child[${index}].time[4]`}
+                                                        >
+                                                            <RangePicker
+                                                                showTime
+                                                                type="year"
+                                                                format="NNN"
+                                                                size="small"
+                                                            />
+                                                        </FormBinder>
+
+                                                    </p>
+                                                    <p>
+                                                        <span style={{ marginRight: "16px" }}>星期六:</span>
+                                                        <FormBinder
+                                                            
+                                                            name={`child[${index}].time[5]`}
+                                                        >
+                                                            <RangePicker
+                                                                showTime
+                                                                type="year"
+                                                                format="NNN"
+                                                                size="small"
+                                                            />
+                                                        </FormBinder>
+
+                                                    </p>
+                                                    <p>
+                                                        <span style={{ marginRight: "16px" }}>星期天:</span>
+                                                        <FormBinder
+                                                            
+                                                            name={`child[${index}].time[6]`}
+                                                        >
+                                                            <RangePicker
+                                                                showTime
                                                                 type="year"
                                                                 format="NNN"
                                                                 size="small"
