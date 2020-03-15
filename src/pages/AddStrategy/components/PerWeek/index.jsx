@@ -48,7 +48,8 @@ function PerWeek(props) {
                                 strategyName: values.strategyName,
                                 priority: values.priority,
                                 child: newChild
-                            })
+                            }).then((res) => Message.success("添加成功"))
+                            .catch((res) => Message.success("添加失败"))
                         }
                     })
                 }}

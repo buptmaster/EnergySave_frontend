@@ -76,9 +76,6 @@ function UserLogin(props) {
             >
               登 录
             </Button>
-            <Link to="/user/register" className={styles.tips}>
-              立即注册
-            </Link>
           </div>
         </div>
       </IceFormBinderWrapper>

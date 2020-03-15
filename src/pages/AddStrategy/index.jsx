@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Dialog, Button, Input, Card, DatePicker, Overlay, Menu } from '@alifd/next';
+import { Dialog, Button, Input, Card, DatePicker, Overlay, Menu, Message } from '@alifd/next';
 import IceContainer from '@icedesign/container';
 import { withRouter } from 'react-router-dom';
 import PageHead from '@/components/PageHead';
@@ -56,7 +56,8 @@ function AddStrategy(props) {
                 strategyName: values.strategyName,
                 priority: values.priority,
                 child: newvals
-              })
+              }).then((res) => Message.success("添加成功"))
+              .catch((res) => Message.success("添加失败"))
             }
           })
         }}
