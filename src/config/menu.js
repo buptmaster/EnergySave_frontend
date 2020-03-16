@@ -45,6 +45,11 @@ const asideMenuConfig = [
     path: '/add/category',
     icon: 'cascades',
   },
+  {
+    name: '申请审批',
+    path: '/request',
+    icon: 'shopcar',
+  }
 ];
 
 export { headerMenuConfig, asideMenuConfig };

@@ -8,6 +8,7 @@ import NotFound from '@/pages/NotFound';
 
 import UserLayout from '@/layouts/UserLayout';
 import BasicLayout from '@/layouts/BasicLayout';
+import DeviceRequest from '@/pages/DeviceRequest';
 
 const routerConfig = [
   {
@@ -43,6 +44,10 @@ const routerConfig = [
       {
         path: '/add/category',
         component: AddCategory,
+      },
+      {
+        path: '/request',
+        component: DeviceRequest,
       },
       {
         path: '/',
