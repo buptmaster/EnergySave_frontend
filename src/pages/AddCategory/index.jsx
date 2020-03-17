@@ -69,7 +69,6 @@ export default function AddCategory() {
   }
 
   const PopUpView = () => {
-    console.log("where am i")
     return (
       <Menu
         selectMode="single"

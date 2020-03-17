@@ -28,7 +28,7 @@ function UserLogin(props) {
     Axios.post('/user/login', qs.stringify(value))
     .then((rep) => {
       Message.success('登录成功');
-      props.history.push('/');
+      props.history.push('/dashboard');
     }).catch((rep) => Message.warning('登录失败'));
   };
 

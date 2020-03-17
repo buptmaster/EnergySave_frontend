@@ -1,19 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import PageHead from '@/components/PageHead';
-import { Table, Button, Grid } from '@alifd/next';
+import { Table, Button, Select } from '@alifd/next';
 import { withRouter } from 'react-router-dom';
-import IceContainer from '@icedesign/container';
 import Axios from 'axios';
+import qs from 'qs';
 
 function DeviceRequest(props) {
 
     const [data, setData] = useState([]);
 
-    const fetchData = () => {
-        Axios.get('/request')
+    const fetchData = (v = 'unauthorized') => {
+        Axios.get(`/request?status=${v}`)
         .then((res) => {
             setData(res.data.data)
         })
+    }
+
+    const changeStatus = (id, status) => {
+        Axios.post('/request/change', qs.stringify({
+            id: id,
+            status: status
+        }))
     }
 
     useEffect(() => {
@@ -22,11 +29,28 @@ function DeviceRequest(props) {
 
     const optionView = (v, i, record) => {
         let disable = record.status !== 'unauthorized'
-        console.log(disable, record)
         return (
             <div>
-                <Button disabled={disable} type="primary" style={{marginRight: "8px"}}>同意</Button>
-                <Button disabled={disable} type="primary" warning >否决</Button>
+                <Button 
+                    onClick={() => {
+                        changeStatus(record.id, "granted")
+                        fetchData()
+                    }}
+                    disabled={disable} 
+                    type="primary" 
+                    style={{marginRight: "8px"}}>
+                        同意
+                    </Button>
+                <Button 
+                    onClick={() => {
+                        changeStatus(record.id, "denied")
+                        fetchData()
+                    }}
+                    disabled={disable} 
+                    type="primary" 
+                    warning >
+                        否决
+                    </Button>
             </div>
         )
     }
@@ -37,6 +61,17 @@ function DeviceRequest(props) {
             <PageHead
                 title="申请审批"
             />
+            <Select 
+                style={{marginBottom : "8px"}}
+                defaultValue="unauthorized"
+                onChange={(v) => {
+                    fetchData(v)
+                }} 
+            >
+                <Select.Option value="unauthorized" >待审批</Select.Option>
+                <Select.Option value="granted" >已通过</Select.Option>
+                <Select.Option value="denied" >已否决</Select.Option>
+            </Select>
             <div >
                 <Table
                     hasBorder={true}

@@ -9,8 +9,13 @@ import NotFound from '@/pages/NotFound';
 import UserLayout from '@/layouts/UserLayout';
 import BasicLayout from '@/layouts/BasicLayout';
 import DeviceRequest from '@/pages/DeviceRequest';
+import UserRequest from '@/pages/UserRequest';
 
 const routerConfig = [
+  {
+    path: '/user_request',
+    component: UserRequest
+  },
   {
     path: '/user',
     component: UserLayout,
@@ -51,7 +56,7 @@ const routerConfig = [
       },
       {
         path: '/',
-        redirect: '/dashboard',
+        redirect: '/user/login',
       },
       {
         component: NotFound,
