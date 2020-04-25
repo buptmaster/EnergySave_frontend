@@ -6,10 +6,10 @@ import Axios from 'axios';
 
 function UserRegister() {
 
-  const {Row, Col} = Grid
+  const { Row, Col } = Grid
 
   const [data, setData] = useState([])
-  const [user, setUser] = useState({username:'', password:'', role:'NORMAL'})
+  const [user, setUser] = useState({ username: '', password: '', role: 'NORMAL' })
 
   const fetchData = () => {
     Axios.get('/user/all')
@@ -27,34 +27,36 @@ function UserRegister() {
         title="用户管理"
         buttonText="添加用户"
         onClick={() => {
-          if(user.username && user.password){
-            Axios.post('/user/addUser', user).catch(() => {Message.warning('未授权')})
+          if (user.username && user.password) {
+            Axios.post('/user/addUser', user)
+              .then(() => {fetchData()})
+              .catch(() => { Message.warning('未授权') })
           }
         }}
       />
-      <div style={{marginBottom:"16px"}}>
+      <div style={{ marginBottom: "16px" }}>
         <Row>
           <Col >
-            <span style={{marginLeft:"8px"}}>用户名：</span>
+            <span style={{ marginLeft: "8px" }}>用户名：</span>
             <Input onChange={(t) => {
               user.username = t
-              setUser({...user})
+              setUser({ ...user })
             }} />
           </Col>
           <Col >
-            <span style={{marginLeft:"8px"}}>用户密码：</span>
+            <span style={{ marginLeft: "8px" }}>用户密码：</span>
             <Input onChange={(v) => {
               user.password = v
-              setUser({...user})
+              setUser({ ...user })
             }} />
           </Col>
           <Col >
-            <span style={{marginLeft:"8px"}}>用户角色：</span>
+            <span style={{ marginLeft: "8px" }}>用户角色：</span>
             <Select
               defaultValue="NORMAL"
               onChange={(v) => {
                 user.role = v
-                setUser({...user})
+                setUser({ ...user })
               }}
             >
               <Select.Option value="ADMIN" >Admin</Select.Option>
@@ -73,16 +75,21 @@ function UserRegister() {
           <Table.Column title="ID" dataIndex="authId" />
           <Table.Column title="角色" dataIndex="role" />
           <Table.Column title="操作" cell={
-            <Button
-              warning
-              type="primary"
-              onClick={(v, i, record) => {
-                Axios.post(`/user/delUser?username=${record.userName}`)
-              }}
-            >
-              删除
-            </Button>
-          } /> 
+            (v, i, record) => {
+              return (
+              <Button
+                warning
+                type="primary"
+                onClick={() => {
+                  console.log(v, i, record)
+                  Axios.post(`/user/delUser?username=${record.userName}`)
+                  .then(() => fetchData())
+                }}
+              >
+                删除
+              </Button>)
+            }
+          } />
         </Table>
       </div>
     </div>
