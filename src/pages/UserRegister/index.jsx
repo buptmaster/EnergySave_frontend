@@ -1,150 +1,90 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, version } from 'react';
 import { withRouter, Link } from 'react-router-dom';
-import { Input, Button, Message } from '@alifd/next';
-import {
-  FormBinderWrapper as IceFormBinderWrapper,
-  FormBinder as IceFormBinder,
-  FormError as IceFormError,
-} from '@icedesign/form-binder';
-import IceIcon from '@icedesign/foundation-symbol';
-import styles from './index.module.scss';
+import { Input, Button, Select, Table, Grid, Message } from '@alifd/next';
+import PageHead from '@/components/PageHead'
+import Axios from 'axios';
 
-let form;
-function UserRegister(props) {
-  const [value, setValue] = useState({
-    name: '',
-    email: '',
-    passwd: '',
-    rePasswd: '',
-  });
+function UserRegister() {
 
-  const checkPasswd = (rule, values, callback) => {
-    if (!values) {
-      callback('请输入正确的密码');
-    } else if (values.length < 8) {
-      callback('密码必须大于8位');
-    } else if (values.length > 16) {
-      callback('密码必须小于16位');
-    } else {
-      callback();
-    }
-  };
+  const {Row, Col} = Grid
 
-  const checkPasswd2 = (rule, values, callback, stateValues) => {
-    if (!values) {
-      callback('请输入正确的密码');
-    } else if (values && values !== stateValues.passwd) {
-      callback('两次输入密码不一致');
-    } else {
-      callback();
-    }
-  };
+  const [data, setData] = useState([])
+  const [user, setUser] = useState({username:'', password:'', role:'NORMAL'})
 
-  const formChange = (formValue) => {
-    setValue(formValue);
-  };
+  const fetchData = () => {
+    Axios.get('/user/all')
+      .then((res) => setData(res.data.data))
+      .catch((res) => Message.warning('未授权'))
+  }
 
-  const handleSubmit = () => {
-    form.validateAll((errors, values) => {
-      if (errors) {
-        console.log('errors', errors);
-        return;
-      }
-      console.log(values);
-      Message.success('注册成功');
-      props.history.push('/user/login');
-    });
-  };
+  useEffect(() => {
+    fetchData()
+  }, [])
 
   return (
-    <div className={styles.container}>
-      <h4 className={styles.title}>注 册</h4>
-      <IceFormBinderWrapper
-        value={value}
-        onChange={formChange}
-        ref={formRef => form = formRef}
-      >
-        <div className={styles.formItems}>
-          <div className={styles.formItem}>
-            <IceIcon type="person" size="small" className={styles.inputIcon} />
-            <IceFormBinder name="name" required message="请输入正确的用户名">
-              <Input
-                size="large"
-                placeholder="用户名"
-                className={styles.inputCol}
-              />
-            </IceFormBinder>
-            <IceFormError name="name" />
-          </div>
-
-          <div className={styles.formItem}>
-            <IceIcon type="mail" size="small" className={styles.inputIcon} />
-            <IceFormBinder
-              type="email"
-              name="email"
-              required
-              message="请输入正确的邮箱"
+    <div>
+      <PageHead
+        title="用户管理"
+        buttonText="添加用户"
+        onClick={() => {
+          if(user.username && user.password){
+            Axios.post('/user/addUser', user).catch(() => {Message.warning('未授权')})
+          }
+        }}
+      />
+      <div style={{marginBottom:"16px"}}>
+        <Row>
+          <Col >
+            <span style={{marginLeft:"8px"}}>用户名：</span>
+            <Input onChange={(t) => {
+              user.username = t
+              setUser({...user})
+            }} />
+          </Col>
+          <Col >
+            <span style={{marginLeft:"8px"}}>用户密码：</span>
+            <Input onChange={(v) => {
+              user.password = v
+              setUser({...user})
+            }} />
+          </Col>
+          <Col >
+            <span style={{marginLeft:"8px"}}>用户角色：</span>
+            <Select
+              defaultValue="NORMAL"
+              onChange={(v) => {
+                user.role = v
+                setUser({...user})
+              }}
             >
-              <Input
-                size="large"
-                maxLength={20}
-                placeholder="邮箱"
-                className={styles.inputCol}
-              />
-            </IceFormBinder>
-            <IceFormError name="email" />
-          </div>
+              <Select.Option value="ADMIN" >Admin</Select.Option>
+              <Select.Option value="NORMAL" >Normal</Select.Option>
+            </Select>
+          </Col>
+        </Row>
+      </div>
 
-          <div className={styles.formItem}>
-            <IceIcon type="lock" size="small" className={styles.inputIcon} />
-            <IceFormBinder
-              name="passwd"
-              required
-              validator={checkPasswd}
-            >
-              <Input
-                htmlType="password"
-                size="large"
-                placeholder="至少8位密码"
-                className={styles.inputCol}
-              />
-            </IceFormBinder>
-            <IceFormError name="passwd" />
-          </div>
-
-          <div className={styles.formItem}>
-            <IceIcon type="lock" size="small" className={styles.inputIcon} />
-            <IceFormBinder
-              name="rePasswd"
-              required
-              validator={(rule, values, callback) => checkPasswd2(rule, values, callback, value)
-              }
-            >
-              <Input
-                htmlType="password"
-                size="large"
-                placeholder="确认密码"
-                className={styles.inputCol}
-              />
-            </IceFormBinder>
-            <IceFormError name="rePasswd" />
-          </div>
-
-          <div className="footer">
+      <div>
+        <Table
+          hasBorder={true}
+          dataSource={data}
+        >
+          <Table.Column title="用户名" dataIndex="userName" />
+          <Table.Column title="ID" dataIndex="authId" />
+          <Table.Column title="角色" dataIndex="role" />
+          <Table.Column title="操作" cell={
             <Button
+              warning
               type="primary"
-              onClick={handleSubmit}
-              className={styles.submitBtn}
-              size="large"
+              onClick={(v, i, record) => {
+                Axios.post(`/user/delUser?username=${record.userName}`)
+              }}
             >
-              注 册
+              删除
             </Button>
-            <Link to="/user/login" className={styles.tips}>
-              使用已有账户登录
-            </Link>
-          </div>
-        </div>
-      </IceFormBinderWrapper>
+          } /> 
+        </Table>
+      </div>
     </div>
   );
 }

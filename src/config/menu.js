@@ -49,6 +49,11 @@ const asideMenuConfig = [
     name: '申请审批',
     path: '/request',
     icon: 'shopcar',
+  },
+  {
+    name: '用户管理',
+    path: '/user_managment',
+    icon: 'cascades'
   }
 ];
 

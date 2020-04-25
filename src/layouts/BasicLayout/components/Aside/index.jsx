@@ -15,23 +15,6 @@ function BasicLayout(props) {
 
   return (
     <div className={styles.asideCustomMenu}>
-      {/* <Logo className={styles.menuLogo} /> */}
-      {/* <div className={styles.userInfo}>
-        <IceImg
-          height={40}
-          width={40}
-          src="https://img.alicdn.com/tfs/TB1eyjzDkvoK1RjSZFDXXXY3pXa-600-600.png"
-          className={styles.userAvatar}
-        />
-        <Notify className={styles.notify} />
-        <div className={styles.userProfile}>
-          <span className={styles.userName}>
-            欧阳宇翔
-          </span>
-          <br />
-          <span className={styles.userDepartment}>技术部</span>
-        </div>
-      </div> */}
 
       <Nav
         mode="inline"

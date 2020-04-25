@@ -23,11 +23,7 @@ const routerConfig = [
       {
         path: '/login',
         component: UserLogin,
-      },
-      {
-        path: '/register',
-        component: UserRegister,
-      },
+      }
     ],
   },
   {
@@ -53,6 +49,10 @@ const routerConfig = [
       {
         path: '/request',
         component: DeviceRequest,
+      },
+      {
+        path: '/user_managment',
+        component: UserRegister
       },
       {
         path: '/',
