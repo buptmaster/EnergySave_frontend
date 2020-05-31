@@ -83,7 +83,10 @@ function UserRegister() {
                 onClick={() => {
                   console.log(v, i, record)
                   Axios.post(`/user/delUser?username=${record.userName}`)
-                  .then(() => fetchData())
+                  .then(() => {
+                    fetchData()
+                    Message.success("删除成功")
+                  })
                 }}
               >
                 删除

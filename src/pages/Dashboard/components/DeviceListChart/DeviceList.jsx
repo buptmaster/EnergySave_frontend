@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Pagination, Button, Dialog } from '@alifd/next';
+import { Table, Pagination, Button, Dialog, Message } from '@alifd/next';
 import styles from './index.module.scss';
 import Axios from 'axios';
 import qs from 'qs';
@@ -55,7 +55,10 @@ export default function DeviceList() {
 
     const onRemove = () => {
       Axios.post('/device/removeTopics', qs.stringify({deviceId: record.deviceId}))
-      .then(() => fetchData(current))
+      .then(() => {
+        fetchData(current)
+        Message.success("移除成功")
+      })
     }
 
 
@@ -65,7 +68,10 @@ export default function DeviceList() {
         content:"确认彻底删除此设备吗？",
         onOk: ()=>{
           Axios.post("/device/delete", qs.stringify({deviceId: record.deviceId}))
-          .then(() => fetchData(current))
+          .then(() => {
+            fetchData(current)
+            Message.success("删除成功")
+          })
         }
       })
     }

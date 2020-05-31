@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PageHead from '@/components/PageHead';
-import { Table, Button, Select } from '@alifd/next';
+import { Table, Button, Select, Message } from '@alifd/next';
 import { withRouter } from 'react-router-dom';
 import Axios from 'axios';
 import qs from 'qs';
@@ -20,7 +20,9 @@ function DeviceRequest(props) {
         Axios.post('/request/change', qs.stringify({
             id: id,
             status: status
-        }))
+        })).then((res) => {
+            Message.success("审批成功")
+        })
     }
 
     useEffect(() => {
